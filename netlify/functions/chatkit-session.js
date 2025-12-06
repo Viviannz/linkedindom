@@ -25,35 +25,42 @@ exports.handler = async (event, context) => {
       };
     }
 
-    console.log('Creating ChatKit session...');
+    console.log('Creating ChatKit session for workflow:', workflowId);
 
-    // Create a session with OpenAI
-    const response = await fetch('https://api.openai.com/v1/realtime/sessions', {
+    // Create a session with ChatKit API (not Realtime API)
+    const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'OpenAI-Beta': 'chatkit_beta=v1'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-realtime-preview-2024-12-17',
-        voice: 'verse',
-        modalities: ['text']
+        workflow: {
+          id: workflowId
+        }
       })
     });
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('OpenAI API error:', error);
+      console.error('ChatKit API error:', error);
       return {
         statusCode: response.status,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        },
         body: JSON.stringify({
-          error: 'Failed to create session',
+          error: 'Failed to create ChatKit session',
           details: error
         })
       };
     }
 
     const data = await response.json();
+    console.log('ChatKit session created successfully');
 
     return {
       statusCode: 200,
@@ -63,8 +70,7 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Headers': 'Content-Type'
       },
       body: JSON.stringify({
-        client_secret: data.client_secret,
-        workflow_id: workflowId
+        client_secret: data.client_secret
       })
     };
   } catch (error) {
