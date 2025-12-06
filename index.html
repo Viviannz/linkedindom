@@ -73,57 +73,64 @@
         <div id="chat-container"></div>
     </main>
 
-    <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
-    <script>
-        // Add error handling and debugging
-        window.addEventListener('load', function() {
-            console.log('Page loaded, ChatKit available:', typeof ChatKit !== 'undefined');
+    <script type="module">
+        // Initialize ChatKit with backend authentication
+        async function initChatKit() {
+            const container = document.getElementById('chat-container');
 
             try {
-                if (typeof ChatKit === 'undefined') {
-                    document.getElementById('chat-container').innerHTML =
-                        '<div style="padding: 2rem; text-align: center; color: #666;">' +
-                        '<h2 style="margin-bottom: 1rem;">ChatKit Loading...</h2>' +
-                        '<p>If this message persists, there may be an issue with the ChatKit library.</p>' +
-                        '<p style="margin-top: 1rem; font-size: 0.9em;">Agent ID: wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806</p>' +
-                        '</div>';
+                container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #666;"><h2>Initializing chat...</h2></div>';
 
-                    // Try again after a delay
-                    setTimeout(initChatKit, 1000);
-                } else {
-                    initChatKit();
-                }
-            } catch (error) {
-                console.error('Error initializing ChatKit:', error);
-                document.getElementById('chat-container').innerHTML =
-                    '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
-                    '<h2>Error Loading Chat</h2>' +
-                    '<p>' + error.message + '</p>' +
-                    '</div>';
-            }
-        });
+                // Get the API base URL (use relative path for same server, or configure for separate deployment)
+                const apiBase = window.location.origin;
 
-        function initChatKit() {
-            if (typeof ChatKit === 'undefined') {
-                console.error('ChatKit is not defined');
-                return;
-            }
-
-            try {
-                const chat = new ChatKit({
-                    agentId: "wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806",
-                    container: document.getElementById("chat-container"),
-                    layout: "embedded"
+                // Fetch session from backend
+                console.log('Fetching session from backend...');
+                const response = await fetch(`${apiBase}/api/chatkit/session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
-                console.log('ChatKit initialized successfully:', chat);
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to create session');
+                }
+
+                const session = await response.json();
+                console.log('Session created successfully');
+
+                // Import and initialize ChatKit
+                const { ChatKit } = await import('https://cdn.jsdelivr.net/npm/@openai/chatkit@1/+esm');
+
+                const chat = new ChatKit({
+                    getClientSecret: async () => session.client_secret.value,
+                    agentId: session.workflow_id,
+                });
+
+                // Render ChatKit in container
+                container.innerHTML = '';
+                container.appendChild(chat);
+
+                console.log('ChatKit initialized successfully');
+
             } catch (error) {
                 console.error('ChatKit initialization error:', error);
-                document.getElementById('chat-container').innerHTML =
+                container.innerHTML =
                     '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
                     '<h2>Chat Initialization Error</h2>' +
                     '<p>' + error.message + '</p>' +
+                    '<p style="margin-top: 1rem; font-size: 0.9em;">Check the browser console for more details.</p>' +
                     '</div>';
             }
+        }
+
+        // Initialize when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChatKit);
+        } else {
+            initChatKit();
         }
     </script>
 </body>

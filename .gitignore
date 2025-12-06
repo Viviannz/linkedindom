@@ -22,3 +22,7 @@ npm-debug.log*
 # Environment variables
 .env
 .env.local
+
+# Node modules
+node_modules/
+package-lock.json
