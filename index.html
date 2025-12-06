@@ -41,12 +41,15 @@
             margin: 0 auto;
         }
 
-        #chat-container {
+        openai-chatkit {
             flex: 1;
             background: white;
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             overflow: hidden;
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         @media (max-width: 768px) {
@@ -70,68 +73,68 @@
     </header>
 
     <main>
-        <div id="chat-container"></div>
+        <openai-chatkit id="chat-container"></openai-chatkit>
     </main>
 
-    <script type="module">
-        // Initialize ChatKit with backend authentication
-        async function initChatKit() {
-            const container = document.getElementById('chat-container');
+    <!-- Load ChatKit from official CDN -->
+    <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
+
+    <script>
+        // Initialize ChatKit when the script loads
+        window.addEventListener('load', async function() {
+            const chatkit = document.getElementById('chat-container');
+
+            if (!chatkit) {
+                console.error('ChatKit element not found');
+                return;
+            }
 
             try {
-                container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #666;"><h2>Initializing chat...</h2></div>';
+                // Configure ChatKit with authentication
+                chatkit.setOptions({
+                    api: {
+                        async getClientSecret(currentClientSecret) {
+                            try {
+                                console.log('Fetching client secret from backend...');
 
-                // Get the API base URL (use relative path for same server, or configure for separate deployment)
-                const apiBase = window.location.origin;
+                                const response = await fetch('/api/chatkit/session', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        currentClientSecret: currentClientSecret
+                                    })
+                                });
 
-                // Fetch session from backend
-                console.log('Fetching session from backend...');
-                const response = await fetch(`${apiBase}/api/chatkit/session`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                                if (!response.ok) {
+                                    const error = await response.json();
+                                    throw new Error(error.error || 'Failed to create session');
+                                }
+
+                                const data = await response.json();
+                                console.log('Session created successfully');
+
+                                return data.client_secret;
+                            } catch (error) {
+                                console.error('Failed to get client secret:', error);
+                                throw error;
+                            }
+                        }
                     }
                 });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to create session');
-                }
-
-                const session = await response.json();
-                console.log('Session created successfully');
-
-                // Import and initialize ChatKit
-                const { ChatKit } = await import('https://cdn.jsdelivr.net/npm/@openai/chatkit@1/+esm');
-
-                const chat = new ChatKit({
-                    getClientSecret: async () => session.client_secret.value,
-                    agentId: session.workflow_id,
-                });
-
-                // Render ChatKit in container
-                container.innerHTML = '';
-                container.appendChild(chat);
-
-                console.log('ChatKit initialized successfully');
-
+                console.log('ChatKit configured successfully');
             } catch (error) {
-                console.error('ChatKit initialization error:', error);
-                container.innerHTML =
+                console.error('ChatKit configuration error:', error);
+                chatkit.innerHTML =
                     '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
-                    '<h2>Chat Initialization Error</h2>' +
+                    '<h2>Chat Configuration Error</h2>' +
                     '<p>' + error.message + '</p>' +
                     '<p style="margin-top: 1rem; font-size: 0.9em;">Check the browser console for more details.</p>' +
                     '</div>';
             }
-        }
-
-        // Initialize when page loads
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initChatKit);
-        } else {
-            initChatKit();
-        }
+        });
     </script>
 </body>
 </html>
