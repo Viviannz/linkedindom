@@ -222,22 +222,7 @@
                     statusMessage.style.display = 'none';
                 }
 
-                console.log('[ChatKit] Widget should now be visible and configured');
-
-                // Check if widget is actually visible
-                setTimeout(() => {
-                    const computedStyle = window.getComputedStyle(chatkit);
-                    console.log('[ChatKit] Widget visibility check:', {
-                        display: computedStyle.display,
-                        visibility: computedStyle.visibility,
-                        opacity: computedStyle.opacity,
-                        hasContent: chatkit.innerHTML.length > 0
-                    });
-
-                    if (computedStyle.display === 'none' || chatkit.innerHTML.length === 0) {
-                        showError('ChatKit widget became hidden or empty after initialization. Check console for details.');
-                    }
-                }, 2000);
+                console.log('[ChatKit] Widget is now visible and configured');
 
             } catch (error) {
                 console.error('[ChatKit] Initialization error:', error);
