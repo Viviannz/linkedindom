@@ -1,7 +1,23 @@
 # Netlify configuration
 [build]
   publish = "."
+  functions = "netlify/functions"
 
+# Environment variables (set these in Netlify dashboard)
+# OPENAI_API_KEY
+# CHATKIT_WORKFLOW_ID
+
+[[redirects]]
+  from = "/api/chatkit/session"
+  to = "/.netlify/functions/chatkit-session"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+# SPA fallback - must be last
 [[redirects]]
   from = "/*"
   to = "/index.html"

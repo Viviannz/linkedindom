@@ -14,73 +14,86 @@ A full-stack web application integrating OpenAI's ChatKit for AI-powered chat co
 ## Architecture
 
 - **Frontend**: Vanilla HTML/CSS/JavaScript with ChatKit web component
-- **Backend**: Node.js + Express server for secure API key management
+- **Backend**: Netlify Functions (serverless) for secure API key management
 - **API**: OpenAI ChatKit Realtime API
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
 - OpenAI API key with ChatKit access
 - ChatKit workflow ID (starts with `wf_`)
-
-### Installation
-
-1. Clone the repository and install dependencies:
-
-```bash
-npm install
-```
-
-2. Create a `.env` file (copy from `.env.example`):
-
-```bash
-cp .env.example .env
-```
-
-3. Update `.env` with your credentials:
-
-```env
-OPENAI_API_KEY=your_openai_api_key_here
-CHATKIT_WORKFLOW_ID=wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806
-PORT=3000
-```
-
-### Running Locally
-
-Start the development server:
-
-```bash
-npm start
-```
-
-Then navigate to `http://localhost:3000` in your browser.
+- Netlify account (free tier works!)
 
 ## Deployment
 
-### Deploy to Vercel (Recommended)
+### Deploy to Netlify (Recommended - Already Configured!)
 
-1. Install Vercel CLI:
+Your app is configured for Netlify with serverless functions. Here's how to set it up:
+
+#### Option 1: Netlify Web Interface
+
+1. Go to your Netlify dashboard: [app.netlify.com](https://app.netlify.com)
+2. Go to **Site settings** → **Environment variables**
+3. Add these environment variables:
+   - **Key**: `OPENAI_API_KEY`
+     **Value**: `your-openai-api-key-starting-with-sk-proj-`
+   - **Key**: `CHATKIT_WORKFLOW_ID`
+     **Value**: `wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806`
+4. Click **Save**
+5. Go to **Deploys** → **Trigger deploy** → **Deploy site**
+
+Your app will be live in 30-60 seconds!
+
+#### Option 2: Netlify CLI
+
 ```bash
-npm i -g vercel
+# Install Netlify CLI (if not already installed)
+npm install -g netlify-cli
+
+# Login to Netlify
+netlify login
+
+# Link to your existing site or create new one
+netlify link
+
+# Set environment variables
+netlify env:set OPENAI_API_KEY "your_api_key_here"
+netlify env:set CHATKIT_WORKFLOW_ID "wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806"
+
+# Deploy
+netlify deploy --prod
 ```
 
-2. Deploy:
+### Running Locally (Optional)
+
+For local testing with Netlify Functions:
+
 ```bash
-vercel
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Create .env file
+cp .env.example .env
+
+# Edit .env with your credentials
+
+# Run locally
+netlify dev
 ```
 
-3. Set environment variables in Vercel dashboard:
-   - `OPENAI_API_KEY`: Your OpenAI API key
-   - `CHATKIT_WORKFLOW_ID`: Your workflow ID
+Then navigate to `http://localhost:8888` in your browser.
 
-Or use the Vercel web interface:
-- Go to [vercel.com](https://vercel.com)
-- Import your Git repository
-- Add environment variables in Settings → Environment Variables
+### Alternative Deployment Options
 
-### Deploy to Railway/Render
+#### Deploy to Vercel
+
+1. Go to [vercel.com](https://vercel.com)
+2. Import your Git repository
+3. Add environment variables in Settings → Environment Variables
+4. Deploy!
+
+#### Deploy to Railway/Render
 
 1. Connect your repository
 2. Add environment variables:
@@ -92,13 +105,18 @@ Or use the Vercel web interface:
 
 ```
 .
-├── index.html          # Frontend application
-├── server.js           # Backend Express server
-├── package.json        # Node.js dependencies
-├── vercel.json         # Vercel deployment config
-├── .env                # Environment variables (gitignored)
-├── .env.example        # Environment template
-└── README.md           # Documentation
+├── index.html                        # Frontend application
+├── netlify/
+│   └── functions/
+│       ├── chatkit-session.js        # Session creation API
+│       └── health.js                 # Health check endpoint
+├── netlify.toml                      # Netlify configuration
+├── server.js                         # Alternative: Express server (for Vercel/Railway)
+├── package.json                      # Node.js dependencies
+├── vercel.json                       # Alternative: Vercel deployment config
+├── .env                              # Environment variables (gitignored)
+├── .env.example                      # Environment template
+└── README.md                         # Documentation
 ```
 
 ## API Endpoints
@@ -157,9 +175,9 @@ Health check endpoint.
 ## Technologies
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES Modules)
-- **Backend**: Node.js, Express
+- **Backend**: Netlify Functions (serverless)
 - **ChatKit**: OpenAI ChatKit SDK
-- **Deployment**: Vercel, Railway, or any Node.js hosting
+- **Deployment**: Netlify (or Vercel, Railway)
 
 ## Browser Support
 
