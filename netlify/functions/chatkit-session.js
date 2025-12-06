@@ -44,6 +44,9 @@ exports.handler = async (event, context) => {
 
     console.log('Creating ChatKit session for workflow:', workflowId);
 
+    // Generate a user ID (can be enhanced later with actual user tracking)
+    const userId = 'user_' + Math.random().toString(36).substring(2, 15);
+
     // Create a session with ChatKit API (not Realtime API)
     const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
       method: 'POST',
@@ -55,7 +58,8 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         workflow: {
           id: workflowId
-        }
+        },
+        user: userId
       })
     });
 
