@@ -69,6 +69,10 @@
     </header>
 
     <main>
+        <div id="error-display" style="display: none; padding: 2rem; background: rgba(255, 107, 107, 0.2); border-radius: 12px; margin-bottom: 1rem; color: white; border: 2px solid #ff6b6b;">
+            <h3 style="margin-bottom: 0.5rem;">❌ Error</h3>
+            <p id="error-message"></p>
+        </div>
         <div id="chat-container">
             <div id="status-message" style="padding: 3rem; text-align: center; color: white;">
                 <h2 style="margin-bottom: 1rem;">🔄 Loading Chat...</h2>
@@ -81,6 +85,16 @@
     <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async onload="initChatKit()" onerror="handleScriptError()"></script>
 
     <script>
+        function showError(message) {
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            if (errorDisplay && errorMessage) {
+                errorMessage.innerHTML = message;
+                errorDisplay.style.display = 'block';
+            }
+            console.error('ChatKit Error:', message);
+        }
+
         function updateStatus(title, message, isError = false) {
             const statusEl = document.getElementById('status-message');
             if (statusEl) {
@@ -90,6 +104,10 @@
                     </h2>
                     <p style="color: ${isError ? '#ffcccc' : 'rgba(255,255,255,0.9)'};">${message}</p>
                 `;
+            }
+            console.log(`[ChatKit] ${title}: ${message}`);
+            if (isError) {
+                showError(`${title}: ${message}`);
             }
         }
 
@@ -103,23 +121,28 @@
 
         async function initChatKit() {
             try {
+                console.log('[ChatKit] Starting initialization...');
                 updateStatus('Setting Up Chat', 'Waiting for ChatKit to initialize...');
 
                 // Wait for the custom element to be defined
                 if (customElements && customElements.whenDefined) {
+                    console.log('[ChatKit] Waiting for openai-chatkit element to be defined...');
                     await customElements.whenDefined('openai-chatkit');
+                    console.log('[ChatKit] openai-chatkit element is now defined');
                 } else {
                     // Fallback: wait a bit
+                    console.log('[ChatKit] customElements API not available, waiting 1s...');
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
 
-                updateStatus('Connecting', 'Fetching authentication token...');
+                updateStatus('Creating Widget', 'Setting up chat interface...');
 
                 // Create the ChatKit element
                 const container = document.getElementById('chat-container');
                 container.innerHTML = '<openai-chatkit id="chatkit-widget"></openai-chatkit>';
 
                 const chatkit = document.getElementById('chatkit-widget');
+                console.log('[ChatKit] Widget element created:', chatkit);
 
                 // Apply styles
                 chatkit.style.cssText = `
@@ -132,11 +155,16 @@
                     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
                 `;
 
+                console.log('[ChatKit] Configuring authentication...');
+
                 // Configure ChatKit with authentication
                 chatkit.setOptions({
                     api: {
                         async getClientSecret(currentClientSecret) {
                             try {
+                                console.log('[ChatKit] Requesting client secret from backend...',
+                                    currentClientSecret ? '(refresh)' : '(initial)');
+
                                 const response = await fetch('/api/chatkit/session', {
                                     method: 'POST',
                                     headers: {
@@ -147,32 +175,47 @@
                                     })
                                 });
 
+                                console.log('[ChatKit] Backend response status:', response.status);
+
                                 if (!response.ok) {
-                                    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-                                    throw new Error(error.error || `Server error: ${response.status}`);
+                                    const errorText = await response.text();
+                                    console.error('[ChatKit] Backend error response:', errorText);
+                                    let error;
+                                    try {
+                                        error = JSON.parse(errorText);
+                                    } catch (e) {
+                                        error = { error: errorText };
+                                    }
+                                    const errorMsg = error.error || error.details || `Server error: ${response.status}`;
+                                    showError(`Authentication failed: ${errorMsg}<br><br>Make sure environment variables are set in Netlify.`);
+                                    throw new Error(errorMsg);
                                 }
 
                                 const data = await response.json();
+                                console.log('[ChatKit] Client secret received:', data.client_secret ? 'yes' : 'no');
+
+                                if (!data.client_secret) {
+                                    showError('Backend returned empty client_secret. Check server logs.');
+                                    throw new Error('No client_secret in response');
+                                }
+
                                 return data.client_secret;
                             } catch (error) {
-                                updateStatus(
-                                    'Authentication Error',
-                                    `Failed to connect: ${error.message}. Check environment variables in Netlify.`,
-                                    true
-                                );
+                                console.error('[ChatKit] getClientSecret error:', error);
+                                showError(`Failed to authenticate: ${error.message}<br><br>Check:<br>• Environment variables in Netlify<br>• Network tab in browser dev tools<br>• Netlify function logs`);
                                 throw error;
                             }
                         }
                     }
                 });
 
+                console.log('[ChatKit] Configuration complete, widget should be loading...');
+
             } catch (error) {
+                console.error('[ChatKit] Initialization error:', error);
                 updateStatus(
                     'Initialization Error',
-                    `${error.message}<br><br>Possible issues:<br>
-                    • Environment variables not set in Netlify<br>
-                    • Invalid API key or workflow ID<br>
-                    • ChatKit library failed to load`,
+                    `${error.message}<br><br>Check browser console for details.`,
                     true
                 );
             }
@@ -185,6 +228,7 @@
                     // Check if ChatKit script loaded but onload didn't fire
                     setTimeout(() => {
                         if (customElements.get('openai-chatkit')) {
+                            console.log('[ChatKit] Fallback initialization triggered');
                             initChatKit();
                         }
                     }, 500);
