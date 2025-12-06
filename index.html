@@ -73,13 +73,58 @@
         <div id="chat-container"></div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@openai/chatkit/dist/chatkit.umd.js"></script>
+    <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
     <script>
-        const chat = new ChatKit({
-            agentId: "wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806",
-            container: document.getElementById("chat-container"),
-            layout: "embedded"
+        // Add error handling and debugging
+        window.addEventListener('load', function() {
+            console.log('Page loaded, ChatKit available:', typeof ChatKit !== 'undefined');
+
+            try {
+                if (typeof ChatKit === 'undefined') {
+                    document.getElementById('chat-container').innerHTML =
+                        '<div style="padding: 2rem; text-align: center; color: #666;">' +
+                        '<h2 style="margin-bottom: 1rem;">ChatKit Loading...</h2>' +
+                        '<p>If this message persists, there may be an issue with the ChatKit library.</p>' +
+                        '<p style="margin-top: 1rem; font-size: 0.9em;">Agent ID: wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806</p>' +
+                        '</div>';
+
+                    // Try again after a delay
+                    setTimeout(initChatKit, 1000);
+                } else {
+                    initChatKit();
+                }
+            } catch (error) {
+                console.error('Error initializing ChatKit:', error);
+                document.getElementById('chat-container').innerHTML =
+                    '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
+                    '<h2>Error Loading Chat</h2>' +
+                    '<p>' + error.message + '</p>' +
+                    '</div>';
+            }
         });
+
+        function initChatKit() {
+            if (typeof ChatKit === 'undefined') {
+                console.error('ChatKit is not defined');
+                return;
+            }
+
+            try {
+                const chat = new ChatKit({
+                    agentId: "wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806",
+                    container: document.getElementById("chat-container"),
+                    layout: "embedded"
+                });
+                console.log('ChatKit initialized successfully:', chat);
+            } catch (error) {
+                console.error('ChatKit initialization error:', error);
+                document.getElementById('chat-container').innerHTML =
+                    '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
+                    '<h2>Chat Initialization Error</h2>' +
+                    '<p>' + error.message + '</p>' +
+                    '</div>';
+            }
+        }
     </script>
 </body>
 </html>
