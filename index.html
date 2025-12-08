@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatKit Integration</title>
+    <title>AI Chat Assistant - Powered by ChatKit</title>
     <style>
         * {
             margin: 0;
@@ -14,70 +14,560 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #000000;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: #ffffff;
+            line-height: 1.6;
         }
 
+        /* Header */
         header {
-            background: rgba(0, 0, 0, 0.8);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(147, 51, 234, 0.2);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.75rem;
+            font-weight: 700;
         }
 
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #a855f7;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(147, 51, 234, 0.05) 0%, transparent 100%);
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .sparkle {
+            display: inline-block;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+
+        /* Chat Section */
+        .chat-section {
             padding: 2rem;
             max-width: 1400px;
-            width: 100%;
             margin: 0 auto;
         }
 
+        .chat-wrapper {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            box-shadow: 0 20px 60px rgba(147, 51, 234, 0.2);
+        }
+
+        #error-display {
+            display: none;
+            padding: 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        #status-message {
+            padding: 3rem;
+            text-align: center;
+            color: white;
+        }
+
+        openai-chatkit {
+            display: none;
+            width: 100%;
+            min-height: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Sections */
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .about-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.05));
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
+        }
+
+        .about-card h3 {
+            color: #a855f7;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .about-card p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* How it Works */
+        .steps {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            padding: 2rem;
+            background: linear-gradient(90deg, rgba(147, 51, 234, 0.05), transparent);
+            border-left: 3px solid #a855f7;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #a855f7;
+            min-width: 60px;
+        }
+
+        .step-content h3 {
+            color: #a855f7;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(79, 70, 229, 0.05));
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #a855f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(147, 51, 234, 0.1);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            border-top: 1px solid rgba(147, 51, 234, 0.2);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #a855f7;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            color: #a855f7;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(147, 51, 234, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Decorative Elements */
+        .glow-orb {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glow-orb-1 {
+            top: 10%;
+            left: 10%;
+            background: radial-gradient(circle, #a855f7, transparent);
+        }
+
+        .glow-orb-2 {
+            top: 50%;
+            right: 10%;
+            background: radial-gradient(circle, #6366f1, transparent);
+        }
+
+        .glow-orb-3 {
+            bottom: 10%;
+            left: 50%;
+            background: radial-gradient(circle, #ec4899, transparent);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            main {
-                padding: 1rem;
-            }
-
-            header {
-                padding: 1rem;
-            }
-
             header h1 {
                 font-size: 1.25rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .step {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Decorative Glow Orbs -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <!-- Header -->
     <header>
-        <h1>AI Chat Assistant</h1>
+        <div class="container">
+            <h1>✨ AI Chat Assistant</h1>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+        </div>
     </header>
 
-    <main>
-        <div id="error-display" style="display: none; padding: 2rem; background: rgba(255, 107, 107, 0.2); border-radius: 12px; margin-bottom: 1rem; color: white; border: 2px solid #ff6b6b;">
-            <h3 style="margin-bottom: 0.5rem;">❌ Error</h3>
-            <p id="error-message"></p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Your Intelligent AI Companion <span class="sparkle">✨</span></h2>
+        <p>Experience the future of conversation with our advanced AI-powered chat assistant. Get instant answers, creative solutions, and intelligent assistance.</p>
+    </section>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+        <div class="chat-wrapper">
+            <div id="error-display">
+                <h3 style="margin-bottom: 0.5rem; color: #ef4444;">❌ Error</h3>
+                <p id="error-message"></p>
+            </div>
+            <div id="status-message">
+                <h2 style="margin-bottom: 1rem;">🔄 Loading Chat...</h2>
+                <p>Initializing your AI assistant...</p>
+            </div>
+            <openai-chatkit id="chatkit-widget"></openai-chatkit>
         </div>
-        <div id="status-message" style="padding: 3rem; text-align: center; color: white;">
-            <h2 style="margin-bottom: 1rem;">🔄 Loading Chat...</h2>
-            <p>Initializing ChatKit</p>
+    </div>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2>Why Choose Our AI Assistant? <span class="sparkle">💎</span></h2>
+        <div class="about-grid">
+            <div class="about-card">
+                <h3>🚀 Lightning Fast</h3>
+                <p>Get instant responses powered by cutting-edge AI technology. No waiting, just intelligent answers when you need them.</p>
+            </div>
+            <div class="about-card">
+                <h3>🧠 Smart & Contextual</h3>
+                <p>Our AI understands context and provides relevant, thoughtful responses tailored to your needs.</p>
+            </div>
+            <div class="about-card">
+                <h3>🔒 Secure & Private</h3>
+                <p>Your conversations are protected with enterprise-grade security. Your privacy is our priority.</p>
+            </div>
+            <div class="about-card">
+                <h3>🎯 Always Available</h3>
+                <p>24/7 assistance whenever you need it. Your AI companion never sleeps.</p>
+            </div>
+            <div class="about-card">
+                <h3>💬 Natural Conversation</h3>
+                <p>Chat naturally as you would with a friend. Our AI understands nuance and context.</p>
+            </div>
+            <div class="about-card">
+                <h3>🌟 Continuously Learning</h3>
+                <p>Powered by the latest AI models that are constantly improving and evolving.</p>
+            </div>
         </div>
-        <openai-chatkit id="chatkit-widget" style="display: none; width: 100%; min-height: 600px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);"></openai-chatkit>
-    </main>
+    </section>
+
+    <!-- How it Works -->
+    <section id="how-it-works">
+        <h2>How It Works <span class="sparkle">⚡</span></h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Start a Conversation</h3>
+                    <p>Simply type your question or request in the chat box above. No signup required, just start chatting!</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>AI Processes Your Request</h3>
+                    <p>Our advanced AI analyzes your message, understands the context, and formulates the most helpful response.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Get Instant Answers</h3>
+                    <p>Receive intelligent, relevant responses in real-time. Continue the conversation as needed.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Refine & Iterate</h3>
+                    <p>Ask follow-up questions, request clarifications, or explore new topics. The AI remembers your conversation context.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq">
+        <h2>Frequently Asked Questions <span class="sparkle">❓</span></h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What can I ask the AI assistant?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    You can ask anything! From general knowledge questions to creative brainstorming, problem-solving, writing assistance, code help, and much more. The AI is designed to help with a wide variety of tasks.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is my conversation private?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Yes! Your conversations are handled with enterprise-grade security. We prioritize your privacy and data protection.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Do I need to create an account?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    No account needed! Just start chatting right away. It's that simple.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What AI model powers this assistant?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    This assistant is powered by OpenAI's ChatKit, utilizing advanced language models to provide intelligent and contextual responses.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can the AI remember previous conversations?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    The AI maintains context within a conversation session, allowing for natural, flowing dialogue. Each new session starts fresh for your privacy.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is there a limit to how much I can chat?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    You can have extended conversations with the AI. The system is designed to handle lengthy dialogues while maintaining context and relevance.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>Your intelligent AI companion, powered by OpenAI's ChatKit. Providing instant, intelligent assistance whenever you need it.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#about">About</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#faq">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Technology</h3>
+                <p>Built with OpenAI ChatKit</p>
+                <p>Serverless Architecture</p>
+                <p>Enterprise Security</p>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <p>Have questions or feedback?</p>
+                <p>We'd love to hear from you!</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AI Chat Assistant. Powered by OpenAI ChatKit. All rights reserved.</p>
+        </div>
+    </footer>
 
     <!-- Load ChatKit from official CDN -->
     <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async onload="initChatKit()" onerror="handleScriptError()"></script>
 
     <script>
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const wasActive = faqItem.classList.contains('active');
+
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Toggle current item
+            if (!wasActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        // ChatKit Integration
         function showError(message) {
             const errorDisplay = document.getElementById('error-display');
             const errorMessage = document.getElementById('error-message');
@@ -96,10 +586,10 @@
             const statusEl = document.getElementById('status-message');
             if (statusEl) {
                 statusEl.innerHTML = `
-                    <h2 style="margin-bottom: 1rem; color: ${isError ? '#ff6b6b' : 'white'};">
+                    <h2 style="margin-bottom: 1rem; color: ${isError ? '#ef4444' : 'white'};">
                         ${isError ? '❌' : '🔄'} ${title}
                     </h2>
-                    <p style="color: ${isError ? '#ffcccc' : 'rgba(255,255,255,0.9)'};">${message}</p>
+                    <p style="color: ${isError ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255,255,255,0.7)'};">${message}</p>
                 `;
                 statusEl.style.display = 'block';
             }
@@ -112,7 +602,7 @@
         function handleScriptError() {
             updateStatus(
                 'Failed to Load ChatKit',
-                'Could not load the ChatKit library from CDN. Please check your internet connection and refresh the page.',
+                'Could not load the ChatKit library. Please check your internet connection and refresh the page.',
                 true
             );
         }
@@ -122,13 +612,11 @@
                 console.log('[ChatKit] Starting initialization...');
                 updateStatus('Setting Up Chat', 'Waiting for ChatKit to initialize...');
 
-                // Wait for the custom element to be defined
                 if (customElements && customElements.whenDefined) {
                     console.log('[ChatKit] Waiting for openai-chatkit element to be defined...');
                     await customElements.whenDefined('openai-chatkit');
                     console.log('[ChatKit] openai-chatkit element is now defined');
                 } else {
-                    // Fallback: wait a bit
                     console.log('[ChatKit] customElements API not available, waiting 1s...');
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
@@ -140,13 +628,11 @@
                     throw new Error('ChatKit widget element not found in DOM');
                 }
 
-                // Add error event listeners to the widget
                 chatkit.addEventListener('error', (e) => {
                     console.error('[ChatKit] Widget error event:', e);
                     showError(`ChatKit widget error: ${e.message || 'Unknown error'}`);
                 });
 
-                // Listen for any attribute changes
                 const observer = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
                         console.log('[ChatKit] Widget mutation:', mutation.type, mutation);
@@ -155,13 +641,10 @@
                 observer.observe(chatkit, { attributes: true, childList: true, subtree: true });
 
                 updateStatus('Configuring', 'Setting up authentication...');
-
                 console.log('[ChatKit] Configuring authentication...');
 
-                // Show widget first, then configure
                 chatkit.style.display = 'block';
 
-                // Configure ChatKit with authentication
                 chatkit.setOptions({
                     api: {
                         async getClientSecret(currentClientSecret) {
@@ -216,7 +699,6 @@
 
                 console.log('[ChatKit] Configuration complete');
 
-                // Hide status message
                 const statusMessage = document.getElementById('status-message');
                 if (statusMessage) {
                     statusMessage.style.display = 'none';
@@ -234,11 +716,9 @@
             }
         }
 
-        // Fallback if script loads before this code runs
         if (window.customElements) {
             window.addEventListener('load', function() {
                 if (typeof initChatKit === 'function' && !document.getElementById('chatkit-widget').style.display) {
-                    // Check if ChatKit script loaded but onload didn't fire
                     setTimeout(() => {
                         if (customElements.get('openai-chatkit')) {
                             console.log('[ChatKit] Fallback initialization triggered');
