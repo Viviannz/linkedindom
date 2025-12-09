@@ -17,6 +17,21 @@
   to = "/.netlify/functions/health"
   status = 200
 
+[[redirects]]
+  from = "/api/create-checkout"
+  to = "/.netlify/functions/create-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-session"
+  to = "/.netlify/functions/verify-session"
+  status = 200
+
+[[redirects]]
+  from = "/api/stripe-webhook"
+  to = "/.netlify/functions/stripe-webhook"
+  status = 200
+
 # SPA fallback - must be last
 [[redirects]]
   from = "/*"

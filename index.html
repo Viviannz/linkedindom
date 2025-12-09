@@ -80,6 +80,101 @@
             margin: 0 auto 2rem;
         }
 
+        /* Pricing Section */
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
+            border-radius: 24px;
+            padding: 3rem;
+            border: 2px solid rgba(147, 51, 234, 0.4);
+            box-shadow: 0 30px 80px rgba(147, 51, 234, 0.3);
+            max-width: 500px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .pricing-card .price {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 1rem 0;
+        }
+
+        .pricing-card .period {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .pricing-card li {
+            padding: 0.75rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+        }
+
+        .pricing-card li::before {
+            content: "✓";
+            color: #a855f7;
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .subscribe-btn {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: white;
+            border: none;
+            padding: 1.25rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.5);
+        }
+
+        .subscribe-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .locked-overlay {
+            position: relative;
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        .unlock-message {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            border-radius: 20px;
+            border: 2px solid rgba(147, 51, 234, 0.3);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .unlock-message h3 {
+            color: #a855f7;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
         .sparkle {
             display: inline-block;
             animation: sparkle 2s infinite;
@@ -375,6 +470,29 @@
         <p>Transform your LinkedIn presence with AI-powered strategies, content creation, and networking insights. Build your personal brand and accelerate your professional growth.</p>
     </section>
 
+    <!-- Pricing Section -->
+    <section id="pricing" style="padding: 2rem;">
+        <div class="pricing-card">
+            <h3 style="color: #a855f7; font-size: 1.5rem;">LinkedIn Domination System</h3>
+            <div class="price">$49<span style="font-size: 2rem; color: rgba(255,255,255,0.6);">/mo</span></div>
+            <div class="period">Billed monthly · Cancel anytime</div>
+            <ul>
+                <li>Unlimited AI-powered LinkedIn coaching</li>
+                <li>Content creation & strategy</li>
+                <li>Profile optimization recommendations</li>
+                <li>Network growth tactics</li>
+                <li>Engagement strategies</li>
+                <li>Personal branding guidance</li>
+            </ul>
+            <button id="subscribe-btn" class="subscribe-btn" onclick="handleSubscribe()">
+                Subscribe Now
+            </button>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: rgba(255,255,255,0.5);">
+                Secure payment via Stripe · Start dominating LinkedIn today
+            </p>
+        </div>
+    </section>
+
     <!-- Chat Section -->
     <div class="chat-section">
         <div class="chat-wrapper">
@@ -551,6 +669,111 @@
     <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async onload="initChatKit()" onerror="handleScriptError()"></script>
 
     <script>
+        // Subscription Management
+        const SUBSCRIPTION_KEY = 'linkedin_dom_subscription';
+
+        function hasActiveSubscription() {
+            const subscription = localStorage.getItem(SUBSCRIPTION_KEY);
+            if (!subscription) return false;
+
+            try {
+                const data = JSON.parse(subscription);
+                // Check if subscription is still valid (within 35 days to account for billing cycle)
+                const expiryDate = new Date(data.timestamp);
+                expiryDate.setDate(expiryDate.getDate() + 35);
+                return new Date() < expiryDate;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function setActiveSubscription(sessionId, customerId, subscriptionId) {
+            const data = {
+                sessionId,
+                customerId,
+                subscriptionId,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(data));
+        }
+
+        async function handleSubscribe() {
+            const btn = document.getElementById('subscribe-btn');
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            try {
+                const response = await fetch('/api/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.url) {
+                    // Redirect to Stripe Checkout
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Failed to start checkout. Please try again or contact support.');
+                btn.disabled = false;
+                btn.textContent = 'Subscribe Now';
+            }
+        }
+
+        async function verifyPayment() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+
+            if (sessionId) {
+                try {
+                    const response = await fetch('/api/verify-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ sessionId })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.valid) {
+                        setActiveSubscription(sessionId, data.customerId, data.subscriptionId);
+                        // Remove session_id from URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Verification error:', error);
+                }
+            }
+            return false;
+        }
+
+        function updateUIForSubscription() {
+            const hasSubscription = hasActiveSubscription();
+            const pricingSection = document.getElementById('pricing');
+            const chatSection = document.querySelector('.chat-section');
+            const subscribeBtn = document.getElementById('subscribe-btn');
+
+            if (hasSubscription) {
+                // Hide pricing, show chat
+                if (pricingSection) pricingSection.style.display = 'none';
+                if (chatSection) chatSection.style.display = 'block';
+                return true;
+            } else {
+                // Show pricing, hide chat
+                if (pricingSection) pricingSection.style.display = 'block';
+                if (chatSection) chatSection.style.display = 'none';
+                return false;
+            }
+        }
+
         // FAQ Toggle
         function toggleFaq(element) {
             const faqItem = element.parentElement;
@@ -608,6 +831,12 @@
         }
 
         async function initChatKit() {
+            // Check subscription before initializing chat
+            if (!hasActiveSubscription()) {
+                console.log('[ChatKit] No active subscription, blocking initialization');
+                return;
+            }
+
             try {
                 console.log('[ChatKit] Starting initialization...');
                 updateStatus('Setting Up Chat', 'Waiting for ChatKit to initialize...');
@@ -716,9 +945,21 @@
             }
         }
 
-        if (window.customElements) {
-            window.addEventListener('load', function() {
-                if (typeof initChatKit === 'function' && !document.getElementById('chatkit-widget').style.display) {
+        // Page Load Handler
+        window.addEventListener('load', async function() {
+            console.log('[App] Page loaded, checking subscription status...');
+
+            // Check for payment redirect
+            await verifyPayment();
+
+            // Update UI based on subscription
+            const hasSubscription = updateUIForSubscription();
+
+            console.log('[App] Subscription status:', hasSubscription ? 'Active' : 'None');
+
+            // Initialize ChatKit if subscribed
+            if (hasSubscription && window.customElements) {
+                if (typeof initChatKit === 'function') {
                     setTimeout(() => {
                         if (customElements.get('openai-chatkit')) {
                             console.log('[ChatKit] Fallback initialization triggered');
@@ -726,8 +967,8 @@
                         }
                     }, 500);
                 }
-            });
-        }
+            }
+        });
     </script>
 </body>
 </html>

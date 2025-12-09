@@ -1,15 +1,17 @@
-# ChatKit Integration App
+# LinkedIn Domination System
 
-A full-stack web application integrating OpenAI's ChatKit for AI-powered chat conversations with secure backend authentication.
+A full-stack SaaS application providing AI-powered LinkedIn coaching with integrated Stripe subscription payments.
 
 ## Features
 
-- 🤖 AI chat assistant powered by OpenAI ChatKit
-- 🔐 Secure backend authentication with Node.js/Express
-- 💅 Modern, responsive design
-- 🎨 Beautiful gradient background with glassmorphism effects
-- 📱 Mobile-friendly interface
-- ⚡ Real-time chat streaming
+- 🚀 **LinkedIn Domination AI** - Powered by OpenAI ChatKit
+- 💳 **Stripe Subscriptions** - $49/month recurring billing
+- 🔐 Secure backend authentication with Netlify Functions
+- 💅 Beautiful landing page with pricing section
+- 🎨 Dark theme with purple/blue gradients
+- 📱 Fully responsive mobile-friendly design
+- ⚡ Real-time AI chat streaming
+- 🔒 Payment-gated access to ChatKit widget
 
 ## Architecture
 
@@ -23,7 +25,20 @@ A full-stack web application integrating OpenAI's ChatKit for AI-powered chat co
 
 - OpenAI API key with ChatKit access
 - ChatKit workflow ID (starts with `wf_`)
+- Stripe account (test mode for development)
 - Netlify account (free tier works!)
+
+## 💳 Stripe Setup
+
+**See [STRIPE_SETUP.md](./STRIPE_SETUP.md) for complete Stripe integration guide!**
+
+Quick overview:
+1. Create Stripe account and product ($49/month subscription)
+2. Get API keys and Price ID
+3. Set up webhook endpoint
+4. Configure environment variables in Netlify
+5. Test with Stripe test cards
+6. Go live when ready!
 
 ## Deployment
 
@@ -36,11 +51,22 @@ Your app is configured for Netlify with serverless functions. Here's how to set 
 1. Go to your Netlify dashboard: [app.netlify.com](https://app.netlify.com)
 2. Go to **Site settings** → **Environment variables**
 3. Add these environment variables:
+
+   **For OpenAI ChatKit:**
    - **Key**: `OPENAI_API_KEY`
      **Value**: `your-openai-api-key-starting-with-sk-proj-`
    - **Key**: `CHATKIT_WORKFLOW_ID`
      **Value**: `wf_6933b5bbf3a08190baa9cd7603543d28098f257753de2806`
-4. Click **Save**
+
+   **For Stripe Payments:**
+   - **Key**: `STRIPE_SECRET_KEY`
+     **Value**: `sk_test_...` (test mode) or `sk_live_...` (production)
+   - **Key**: `STRIPE_PRICE_ID`
+     **Value**: `price_...` (from your Stripe product)
+   - **Key**: `STRIPE_WEBHOOK_SECRET`
+     **Value**: `whsec_...` (from your Stripe webhook endpoint)
+
+4. Click **Save** after adding each variable
 5. Go to **Deploys** → **Trigger deploy** → **Deploy site**
 
 Your app will be live in 30-60 seconds!
@@ -105,37 +131,73 @@ Then navigate to `http://localhost:8888` in your browser.
 
 ```
 .
-├── index.html                        # Frontend application
+├── index.html                        # Frontend application with pricing & payment
 ├── netlify/
 │   └── functions/
-│       ├── chatkit-session.js        # Session creation API
+│       ├── chatkit-session.js        # ChatKit session creation
+│       ├── create-checkout.js        # Stripe checkout session
+│       ├── verify-session.js         # Payment verification
+│       ├── stripe-webhook.js         # Stripe webhook handler
 │       └── health.js                 # Health check endpoint
 ├── netlify.toml                      # Netlify configuration
-├── server.js                         # Alternative: Express server (for Vercel/Railway)
-├── package.json                      # Node.js dependencies
-├── vercel.json                       # Alternative: Vercel deployment config
+├── package.json                      # Node.js dependencies (includes Stripe)
+├── STRIPE_SETUP.md                   # Complete Stripe setup guide
 ├── .env                              # Environment variables (gitignored)
-├── .env.example                      # Environment template
-└── README.md                         # Documentation
+└── README.md                         # This file
 ```
 
 ## API Endpoints
 
-### `POST /api/chatkit/session`
+### ChatKit Endpoints
+
+#### `POST /api/chatkit/session`
 Creates a new ChatKit session with OpenAI.
 
 **Response:**
 ```json
 {
-  "client_secret": {
-    "value": "session_token",
-    "expires_at": 1234567890
-  },
-  "workflow_id": "wf_..."
+  "client_secret": "cs_..."
 }
 ```
 
-### `GET /api/health`
+### Stripe Payment Endpoints
+
+#### `POST /api/create-checkout`
+Creates a Stripe checkout session for subscription.
+
+**Response:**
+```json
+{
+  "sessionId": "cs_test_...",
+  "url": "https://checkout.stripe.com/..."
+}
+```
+
+#### `POST /api/verify-session`
+Verifies a completed payment session.
+
+**Request:**
+```json
+{
+  "sessionId": "cs_test_..."
+}
+```
+
+**Response:**
+```json
+{
+  "valid": true,
+  "customerId": "cus_...",
+  "subscriptionId": "sub_..."
+}
+```
+
+#### `POST /api/stripe-webhook`
+Webhook endpoint for Stripe events (checkout completed, subscription canceled, etc.)
+
+### Utility Endpoints
+
+#### `GET /api/health`
 Health check endpoint.
 
 **Response:**
