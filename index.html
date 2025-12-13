@@ -475,30 +475,56 @@
 
     <!-- Pricing Section -->
     <section id="pricing" style="padding: 2rem;">
-        <div class="pricing-card">
-            <h3 style="color: #d65cee; font-size: 1.5rem;">LinkedIn Domination System</h3>
-            <div class="price">$49<span style="font-size: 2rem; color: #7b6ab6;">/mo</span></div>
-            <div class="period">Billed monthly · Cancel anytime</div>
-            <ul>
-                <li>Unlimited AI-powered LinkedIn coaching</li>
-                <li>Content creation & strategy</li>
-                <li>Profile optimization recommendations</li>
-                <li>Network growth tactics</li>
-                <li>Engagement strategies</li>
-                <li>Personal branding guidance</li>
-            </ul>
-            <button id="subscribe-btn" class="subscribe-btn" onclick="handleSubscribe()">
-                Subscribe Now
-            </button>
-            <p style="margin-top: 1rem; font-size: 0.875rem; color: #7b6ab6;">
-                Secure payment via Stripe · Start dominating LinkedIn today
-            </p>
+        <h2 style="text-align: center; margin-bottom: 3rem; background: linear-gradient(135deg, #d65cee, #4c53ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Choose Your Plan</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+            <!-- Free Tier -->
+            <div class="pricing-card" style="border-color: #9e95d8;">
+                <h3 style="color: #4c53ee; font-size: 1.5rem;">Free Trial</h3>
+                <div class="price" style="background: linear-gradient(135deg, #9e95d8, #7b6ab6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">$0<span style="font-size: 2rem; color: #7b6ab6;">/mo</span></div>
+                <div class="period">Try it out · No credit card</div>
+                <ul>
+                    <li>10 AI coaching messages</li>
+                    <li>LinkedIn content ideas</li>
+                    <li>Basic profile tips</li>
+                    <li>Reset every 7 days</li>
+                </ul>
+                <button class="subscribe-btn" style="background: linear-gradient(135deg, #9e95d8, #7b6ab6);" onclick="handleFreeTier()">
+                    Start Free Trial
+                </button>
+                <p style="margin-top: 1rem; font-size: 0.875rem; color: #7b6ab6;">
+                    No payment required
+                </p>
+            </div>
+
+            <!-- Paid Tier -->
+            <div class="pricing-card" style="border-color: #d65cee; position: relative;">
+                <div style="position: absolute; top: -15px; right: 20px; background: linear-gradient(135deg, #d65cee, #4c53ee); color: #f9f8f9; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">POPULAR</div>
+                <h3 style="color: #d65cee; font-size: 1.5rem;">Unlimited Pro</h3>
+                <div class="price">$49<span style="font-size: 2rem; color: #7b6ab6;">/mo</span></div>
+                <div class="period">Billed monthly · Cancel anytime</div>
+                <ul>
+                    <li>Unlimited AI coaching</li>
+                    <li>Content creation & strategy</li>
+                    <li>Profile optimization</li>
+                    <li>Network growth tactics</li>
+                    <li>Engagement strategies</li>
+                    <li>Personal branding</li>
+                </ul>
+                <button id="subscribe-btn" class="subscribe-btn" onclick="handleSubscribe()">
+                    Subscribe Now
+                </button>
+                <p style="margin-top: 1rem; font-size: 0.875rem; color: #7b6ab6;">
+                    Secure payment via Stripe
+                </p>
+            </div>
         </div>
     </section>
 
     <!-- Chat Section -->
     <div class="chat-section">
         <div class="chat-wrapper">
+            <div id="usage-display" style="display: none;"></div>
             <div id="error-display">
                 <h3 style="margin-bottom: 0.5rem; color: #ef4444;">❌ Error</h3>
                 <p id="error-message"></p>
@@ -674,6 +700,9 @@
     <script>
         // Subscription Management
         const SUBSCRIPTION_KEY = 'linkedin_dom_subscription';
+        const FREE_TIER_KEY = 'linkedin_dom_free_tier';
+        const FREE_TIER_LIMIT = 10;
+        const FREE_TIER_RESET_DAYS = 7;
 
         function hasActiveSubscription() {
             const subscription = localStorage.getItem(SUBSCRIPTION_KEY);
@@ -695,9 +724,122 @@
                 sessionId,
                 customerId,
                 subscriptionId,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                tier: 'paid'
             };
             localStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(data));
+        }
+
+        function hasFreeTier() {
+            const freeTier = localStorage.getItem(FREE_TIER_KEY);
+            if (!freeTier) return false;
+
+            try {
+                const data = JSON.parse(freeTier);
+                // Check if free tier is still valid
+                const expiryDate = new Date(data.startDate);
+                expiryDate.setDate(expiryDate.getDate() + FREE_TIER_RESET_DAYS);
+
+                if (new Date() > expiryDate) {
+                    // Reset the free tier
+                    setFreeTier();
+                    return true;
+                }
+
+                return data.messagesUsed < FREE_TIER_LIMIT;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function setFreeTier() {
+            const data = {
+                tier: 'free',
+                startDate: new Date().toISOString(),
+                messagesUsed: 0,
+                limit: FREE_TIER_LIMIT
+            };
+            localStorage.setItem(FREE_TIER_KEY, JSON.stringify(data));
+            // Remove any paid subscription
+            localStorage.removeItem(SUBSCRIPTION_KEY);
+        }
+
+        function incrementFreeMessages() {
+            const freeTier = localStorage.getItem(FREE_TIER_KEY);
+            if (!freeTier) return;
+
+            try {
+                const data = JSON.parse(freeTier);
+                data.messagesUsed += 1;
+                localStorage.setItem(FREE_TIER_KEY, JSON.stringify(data));
+
+                updateUsageDisplay();
+
+                // Check if limit reached
+                if (data.messagesUsed >= FREE_TIER_LIMIT) {
+                    showUpgradePrompt();
+                }
+            } catch (e) {
+                console.error('Error incrementing messages:', e);
+            }
+        }
+
+        function getFreeMessagesRemaining() {
+            const freeTier = localStorage.getItem(FREE_TIER_KEY);
+            if (!freeTier) return 0;
+
+            try {
+                const data = JSON.parse(freeTier);
+                return FREE_TIER_LIMIT - data.messagesUsed;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function updateUsageDisplay() {
+            const remaining = getFreeMessagesRemaining();
+            const usageDiv = document.getElementById('usage-display');
+
+            if (usageDiv && !hasActiveSubscription()) {
+                usageDiv.innerHTML = `
+                    <div style="padding: 1rem; background: rgba(158, 149, 216, 0.2); border-radius: 12px; margin-bottom: 1rem; text-align: center;">
+                        <p style="color: #4c53ee; font-weight: 600;">
+                            📊 Free Trial: ${remaining} of ${FREE_TIER_LIMIT} messages remaining
+                        </p>
+                        ${remaining <= 3 ? `<p style="color: #d65cee; font-size: 0.875rem; margin-top: 0.5rem;">Running low! Upgrade for unlimited access.</p>` : ''}
+                    </div>
+                `;
+                usageDiv.style.display = 'block';
+            }
+        }
+
+        function showUpgradePrompt() {
+            const chatWrapper = document.querySelector('.chat-wrapper');
+            if (chatWrapper) {
+                const upgradeDiv = document.createElement('div');
+                upgradeDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f9f8f9; border: 3px solid #d65cee; border-radius: 20px; padding: 2rem; max-width: 500px; z-index: 1000; box-shadow: 0 20px 60px rgba(214, 92, 238, 0.5);';
+                upgradeDiv.innerHTML = `
+                    <h3 style="color: #d65cee; margin-bottom: 1rem;">Free Trial Limit Reached! 🚀</h3>
+                    <p style="color: #67412a; margin-bottom: 1.5rem;">
+                        You've used all 10 free messages. Upgrade to Unlimited Pro for just $49/month and get unlimited AI-powered LinkedIn coaching!
+                    </p>
+                    <button onclick="handleSubscribe()" style="background: linear-gradient(135deg, #d65cee, #4c53ee); color: #f9f8f9; border: none; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 0.5rem;">
+                        Upgrade to Pro - $49/mo
+                    </button>
+                    <button onclick="this.parentElement.remove()" style="background: transparent; color: #7b6ab6; border: 2px solid #9e95d8; padding: 0.75rem 2rem; font-size: 0.875rem; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%;">
+                        Maybe Later
+                    </button>
+                    <p style="color: #7b6ab6; font-size: 0.875rem; margin-top: 1rem; text-align: center;">
+                        Free trial resets in ${FREE_TIER_RESET_DAYS} days
+                    </p>
+                `;
+                document.body.appendChild(upgradeDiv);
+            }
+        }
+
+        function handleFreeTier() {
+            setFreeTier();
+            updateUIForSubscription();
         }
 
         async function handleSubscribe() {
@@ -759,15 +901,21 @@
         }
 
         function updateUIForSubscription() {
-            const hasSubscription = hasActiveSubscription();
+            const hasPaid = hasActiveSubscription();
+            const hasFree = hasFreeTier();
             const pricingSection = document.getElementById('pricing');
             const chatSection = document.querySelector('.chat-section');
-            const subscribeBtn = document.getElementById('subscribe-btn');
 
-            if (hasSubscription) {
+            if (hasPaid || hasFree) {
                 // Hide pricing, show chat
                 if (pricingSection) pricingSection.style.display = 'none';
                 if (chatSection) chatSection.style.display = 'block';
+
+                // Update usage display for free tier
+                if (hasFree && !hasPaid) {
+                    updateUsageDisplay();
+                }
+
                 return true;
             } else {
                 // Show pricing, hide chat
@@ -834,15 +982,29 @@
         }
 
         async function initChatKit() {
-            // Check subscription before initializing chat
-            if (!hasActiveSubscription()) {
-                console.log('[ChatKit] No active subscription, blocking initialization');
+            // Check subscription or free tier before initializing chat
+            const hasPaid = hasActiveSubscription();
+            const hasFree = hasFreeTier();
+
+            if (!hasPaid && !hasFree) {
+                console.log('[ChatKit] No active subscription or free tier, blocking initialization');
                 return;
+            }
+
+            // Check if free tier has messages remaining
+            if (!hasPaid && hasFree) {
+                const remaining = getFreeMessagesRemaining();
+                if (remaining <= 0) {
+                    console.log('[ChatKit] Free tier limit reached');
+                    showUpgradePrompt();
+                    return;
+                }
             }
 
             try {
                 console.log('[ChatKit] Starting initialization...');
-                updateStatus('Setting Up Chat', 'Waiting for ChatKit to initialize...');
+                const tierType = hasPaid ? 'Pro' : 'Free Trial';
+                updateStatus('Setting Up Chat', `Waiting for ChatKit to initialize... (${tierType})`);
 
                 if (customElements && customElements.whenDefined) {
                     console.log('[ChatKit] Waiting for openai-chatkit element to be defined...');
@@ -865,12 +1027,28 @@
                     showError(`ChatKit widget error: ${e.message || 'Unknown error'}`);
                 });
 
-                const observer = new MutationObserver((mutations) => {
+                // Track messages for free tier
+                const hasPaid = hasActiveSubscription();
+                const messageObserver = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
-                        console.log('[ChatKit] Widget mutation:', mutation.type, mutation);
+                        // Look for new message elements being added
+                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !hasPaid) {
+                            mutation.addedNodes.forEach(node => {
+                                // Check if this looks like a user message (heuristic - adjust based on actual ChatKit structure)
+                                if (node.nodeType === 1 && (
+                                    node.textContent?.length > 0 ||
+                                    node.querySelector?.('[role="article"]') ||
+                                    node.className?.includes('message')
+                                )) {
+                                    // Increment message count for free tier
+                                    incrementFreeMessages();
+                                    console.log('[ChatKit] Message sent, incrementing free tier usage');
+                                }
+                            });
+                        }
                     });
                 });
-                observer.observe(chatkit, { attributes: true, childList: true, subtree: true });
+                messageObserver.observe(chatkit, { attributes: true, childList: true, subtree: true });
 
                 updateStatus('Configuring', 'Setting up authentication...');
                 console.log('[ChatKit] Configuring authentication...');
