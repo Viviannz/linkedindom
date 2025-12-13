@@ -5,32 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LinkedIn Domination System - AI-Powered LinkedIn Growth</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --color-cream: #FAF9F6;
+            --color-charcoal: #2B2B2B;
+            --color-gold: #C9A961;
+            --color-silver: #E8E8E8;
+            --color-white: #FFFFFF;
+            --color-accent: #1D1D1F;
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f4c568;
-            color: #4c53ee;
-            line-height: 1.6;
+            font-family: var(--font-body);
+            background: var(--color-cream);
+            color: var(--color-charcoal);
+            line-height: 1.7;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, rgba(214, 92, 238, 0.15) 0%, rgba(158, 149, 216, 0.15) 100%);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(214, 92, 238, 0.3);
-            padding: 1.5rem 2rem;
+            background: rgba(250, 249, 246, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 3rem;
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header .container {
-            max-width: 1400px;
+            max-width: 1280px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -38,119 +57,132 @@
         }
 
         header h1 {
-            background: linear-gradient(135deg, #d65cee, #4c53ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            color: var(--color-accent);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
         nav a {
-            color: #4c53ee;
+            color: var(--color-charcoal);
             text-decoration: none;
-            margin-left: 2rem;
-            transition: color 0.3s;
-            font-weight: 600;
+            margin-left: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            letter-spacing: -0.01em;
         }
 
         nav a:hover {
-            color: #d65cee;
+            color: var(--color-gold);
         }
 
         /* Hero Section */
         .hero {
-            padding: 4rem 2rem;
+            padding: 8rem 2rem 6rem;
             text-align: center;
-            background: linear-gradient(180deg, rgba(214, 92, 238, 0.1) 0%, transparent 100%);
+            background: linear-gradient(180deg, var(--color-white) 0%, var(--color-cream) 100%);
         }
 
         .hero h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #4c53ee, #d65cee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-family: var(--font-display);
+            font-size: 4.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--color-accent);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            color: #67412a;
-            max-width: 600px;
-            margin: 0 auto 2rem;
+            font-size: 1.125rem;
+            color: rgba(43, 43, 43, 0.7);
+            max-width: 640px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         /* Pricing Section */
         .pricing-card {
-            background: #f9f8f9;
-            border-radius: 24px;
-            padding: 3rem;
-            border: 3px solid #d65cee;
-            box-shadow: 0 30px 80px rgba(214, 92, 238, 0.4);
-            max-width: 500px;
-            margin: 2rem auto;
+            background: var(--color-white);
+            border-radius: 18px;
+            padding: 3.5rem 3rem;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            max-width: 440px;
+            margin: 0 auto;
             text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pricing-card:hover {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
         }
 
         .pricing-card .price {
-            font-size: 4rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #d65cee, #4c53ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 1rem 0;
+            font-family: var(--font-display);
+            font-size: 4.5rem;
+            font-weight: 500;
+            color: var(--color-accent);
+            margin: 1.5rem 0;
+            letter-spacing: -0.04em;
         }
 
         .pricing-card .period {
-            font-size: 1.25rem;
-            color: #7b6ab6;
-            margin-bottom: 2rem;
+            font-size: 1rem;
+            color: rgba(43, 43, 43, 0.6);
+            margin-bottom: 2.5rem;
+            font-weight: 400;
         }
 
         .pricing-card ul {
             list-style: none;
-            margin: 2rem 0;
+            margin: 2.5rem 0;
             text-align: left;
         }
 
         .pricing-card li {
-            padding: 0.75rem 0;
-            color: #4c53ee;
+            padding: 0.875rem 0;
+            color: var(--color-charcoal);
             display: flex;
             align-items: center;
+            font-size: 0.9375rem;
+            line-height: 1.5;
         }
 
         .pricing-card li::before {
             content: "✓";
-            color: #d65cee;
-            font-weight: bold;
+            color: var(--color-gold);
+            font-weight: 600;
             margin-right: 1rem;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
         }
 
         .subscribe-btn {
-            background: linear-gradient(135deg, #d65cee, #4c53ee);
-            color: #f9f8f9;
+            background: var(--color-accent);
+            color: var(--color-white);
             border: none;
-            padding: 1.25rem 3rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            border-radius: 12px;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 980px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            letter-spacing: -0.01em;
         }
 
         .subscribe-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(214, 92, 238, 0.6);
+            background: #000000;
+            transform: scale(1.01);
         }
 
         .subscribe-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
@@ -163,57 +195,60 @@
         .unlock-message {
             text-align: center;
             padding: 3rem;
-            background: #f9f8f9;
-            border-radius: 20px;
-            border: 3px solid #d65cee;
+            background: var(--color-white);
+            border-radius: 18px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             margin: 2rem auto;
             max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .unlock-message h3 {
-            color: #d65cee;
+            font-family: var(--font-display);
+            color: var(--color-accent);
             margin-bottom: 1rem;
             font-size: 2rem;
+            font-weight: 500;
         }
 
         .sparkle {
             display: inline-block;
-            animation: sparkle 2s infinite;
+            animation: sparkle 3s ease-in-out infinite;
         }
 
         @keyframes sparkle {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
         }
 
         /* Chat Section */
         .chat-section {
-            padding: 2rem;
-            max-width: 1400px;
+            padding: 3rem 2rem;
+            max-width: 1280px;
             margin: 0 auto;
         }
 
         .chat-wrapper {
-            background: #f9f8f9;
-            border-radius: 20px;
-            padding: 2rem;
-            border: 3px solid #9e95d8;
-            box-shadow: 0 20px 60px rgba(158, 149, 216, 0.3);
+            background: var(--color-white);
+            border-radius: 18px;
+            padding: 2.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
         }
 
         #error-display {
             display: none;
             padding: 1.5rem;
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.05);
             border-radius: 12px;
             margin-bottom: 1rem;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
         #status-message {
             padding: 3rem;
             text-align: center;
-            color: #4c53ee;
+            color: var(--color-charcoal);
         }
 
         openai-chatkit {
@@ -221,120 +256,136 @@
             width: 100%;
             min-height: 600px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(214, 92, 238, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
         }
 
         /* Sections */
         section {
-            padding: 4rem 2rem;
-            max-width: 1200px;
+            padding: 6rem 2rem;
+            max-width: 1280px;
             margin: 0 auto;
         }
 
         section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin-bottom: 3.5rem;
             text-align: center;
-            background: linear-gradient(135deg, #d65cee, #4c53ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--color-accent);
+            font-weight: 500;
+            letter-spacing: -0.02em;
         }
 
         /* About Section */
         .about-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
+            margin-top: 4rem;
         }
 
         .about-card {
-            background: #f9f8f9;
-            padding: 2rem;
+            background: var(--color-white);
+            padding: 2.5rem;
             border-radius: 16px;
-            border: 2px solid #9e95d8;
-            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
         }
 
         .about-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(214, 92, 238, 0.4);
-            border-color: #d65cee;
+            transform: translateY(-6px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border-color: var(--color-gold);
         }
 
         .about-card h3 {
-            color: #d65cee;
+            font-family: var(--font-display);
+            color: var(--color-accent);
             margin-bottom: 1rem;
             font-size: 1.5rem;
+            font-weight: 500;
         }
 
         .about-card p {
-            color: #67412a;
+            color: rgba(43, 43, 43, 0.7);
+            font-size: 0.9375rem;
+            line-height: 1.6;
         }
 
         /* How it Works */
         .steps {
             display: grid;
-            gap: 2rem;
-            margin-top: 3rem;
+            gap: 2.5rem;
+            margin-top: 4rem;
         }
 
         .step {
             display: flex;
             gap: 2rem;
             align-items: flex-start;
-            padding: 2rem;
-            background: rgba(249, 248, 249, 0.6);
-            border-left: 4px solid #d65cee;
-            border-radius: 8px;
+            padding: 0;
+            background: transparent;
+            border-left: none;
+            border-radius: 0;
         }
 
         .step-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #d65cee;
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--color-gold);
             min-width: 60px;
+            letter-spacing: -0.02em;
         }
 
         .step-content h3 {
-            color: #4c53ee;
-            margin-bottom: 0.5rem;
+            font-family: var(--font-display);
+            color: var(--color-accent);
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 500;
         }
 
         .step-content p {
-            color: #67412a;
+            color: rgba(43, 43, 43, 0.7);
+            line-height: 1.6;
+            font-size: 0.9375rem;
         }
 
         /* FAQ */
         .faq-item {
-            background: #f9f8f9;
-            margin-bottom: 1rem;
-            border-radius: 12px;
-            border: 2px solid #9e95d8;
+            background: transparent;
+            margin-bottom: 0;
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
 
         .faq-question {
-            padding: 1.5rem;
+            padding: 1.75rem 0;
             cursor: pointer;
-            font-weight: 600;
-            color: #4c53ee;
+            font-weight: 500;
+            color: var(--color-accent);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.0625rem;
         }
 
         .faq-question:hover {
-            background: rgba(214, 92, 238, 0.1);
+            color: var(--color-gold);
         }
 
         .faq-answer {
-            padding: 0 1.5rem 1.5rem;
-            color: #67412a;
+            padding: 0 0 1.75rem;
+            color: rgba(43, 43, 43, 0.7);
             display: none;
+            line-height: 1.6;
+            font-size: 0.9375rem;
         }
 
         .faq-item.active .faq-answer {
@@ -342,8 +393,9 @@
         }
 
         .faq-icon {
-            transition: transform 0.3s;
-            color: #d65cee;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--color-gold);
+            font-size: 1.25rem;
         }
 
         .faq-item.active .faq-icon {
@@ -352,77 +404,57 @@
 
         /* Footer */
         footer {
-            background: linear-gradient(135deg, rgba(214, 92, 238, 0.15), rgba(158, 149, 216, 0.15));
-            border-top: 2px solid #9e95d8;
-            padding: 3rem 2rem 2rem;
-            margin-top: 4rem;
+            background: var(--color-white);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 4rem 2rem 2rem;
+            margin-top: 8rem;
         }
 
         .footer-content {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            gap: 3rem;
         }
 
         .footer-section h3 {
-            color: #d65cee;
-            margin-bottom: 1rem;
+            font-family: var(--font-display);
+            color: var(--color-accent);
+            margin-bottom: 1.25rem;
+            font-size: 1.125rem;
+            font-weight: 500;
         }
 
         .footer-section p,
         .footer-section a {
-            color: #67412a;
+            color: rgba(43, 43, 43, 0.6);
             text-decoration: none;
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .footer-section a:hover {
-            color: #4c53ee;
+            color: var(--color-gold);
         }
 
         .footer-bottom {
             text-align: center;
             margin-top: 3rem;
             padding-top: 2rem;
-            border-top: 2px solid rgba(214, 92, 238, 0.3);
-            color: #7b6ab6;
-        }
-
-        /* Decorative Elements */
-        .glow-orb {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.4;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .glow-orb-1 {
-            top: 10%;
-            left: 10%;
-            background: radial-gradient(circle, #d65cee, transparent);
-        }
-
-        .glow-orb-2 {
-            top: 50%;
-            right: 10%;
-            background: radial-gradient(circle, #9e95d8, transparent);
-        }
-
-        .glow-orb-3 {
-            bottom: 10%;
-            left: 50%;
-            background: radial-gradient(circle, #7b6ab6, transparent);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            color: rgba(43, 43, 43, 0.5);
+            font-size: 0.875rem;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            header {
+                padding: 1rem 1.5rem;
+            }
+
             header h1 {
                 font-size: 1.25rem;
             }
@@ -431,34 +463,46 @@
                 display: none;
             }
 
+            .hero {
+                padding: 5rem 1.5rem 4rem;
+            }
+
             .hero h2 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .hero p {
                 font-size: 1rem;
             }
 
+            section {
+                padding: 4rem 1.5rem;
+            }
+
             section h2 {
                 font-size: 2rem;
+                margin-bottom: 2.5rem;
             }
 
             .step {
                 flex-direction: column;
             }
+
+            .pricing-card {
+                padding: 2.5rem 2rem;
+            }
+
+            .pricing-card .price {
+                font-size: 3.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Decorative Glow Orbs -->
-    <div class="glow-orb glow-orb-1"></div>
-    <div class="glow-orb glow-orb-2"></div>
-    <div class="glow-orb glow-orb-3"></div>
-
     <!-- Header -->
     <header>
         <div class="container">
-            <h1>✨ LinkedIn Domination System</h1>
+            <h1>LinkedIn Domination</h1>
             <nav>
                 <a href="#about">About</a>
                 <a href="#how-it-works">How it Works</a>
@@ -469,39 +513,39 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <h2>Master LinkedIn & Dominate Your Industry <span class="sparkle">✨</span></h2>
+        <h2>Master Your Professional Network</h2>
         <p>Transform your LinkedIn presence with AI-powered strategies, content creation, and networking insights. Build your personal brand and accelerate your professional growth.</p>
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" style="padding: 2rem;">
-        <h2 style="text-align: center; margin-bottom: 3rem; background: linear-gradient(135deg, #d65cee, #4c53ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Choose Your Plan</h2>
+    <section id="pricing" style="padding: 6rem 2rem;">
+        <h2>Choose Your Plan</h2>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; max-width: 960px; margin: 0 auto;">
             <!-- Free Tier -->
-            <div class="pricing-card" style="border-color: #9e95d8;">
-                <h3 style="color: #4c53ee; font-size: 1.5rem;">Free Trial</h3>
-                <div class="price" style="background: linear-gradient(135deg, #9e95d8, #7b6ab6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">$0<span style="font-size: 2rem; color: #7b6ab6;">/mo</span></div>
+            <div class="pricing-card" style="border-color: rgba(0, 0, 0, 0.08);">
+                <h3 style="font-family: var(--font-display); color: var(--color-charcoal); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.5rem;">Trial</h3>
+                <div class="price" style="color: var(--color-charcoal);">$0<span style="font-size: 1.5rem; color: rgba(43, 43, 43, 0.5);">/mo</span></div>
                 <div class="period">Try it out · No credit card</div>
                 <ul>
                     <li>10 AI coaching messages</li>
                     <li>LinkedIn content ideas</li>
                     <li>Basic profile tips</li>
-                    <li>Reset every 7 days</li>
+                    <li>Resets every 7 days</li>
                 </ul>
-                <button class="subscribe-btn" style="background: linear-gradient(135deg, #9e95d8, #7b6ab6);" onclick="handleFreeTier()">
-                    Start Free Trial
+                <button class="subscribe-btn" style="background: var(--color-silver); color: var(--color-accent);" onclick="handleFreeTier()">
+                    Start Trial
                 </button>
-                <p style="margin-top: 1rem; font-size: 0.875rem; color: #7b6ab6;">
+                <p style="margin-top: 1rem; font-size: 0.8125rem; color: rgba(43, 43, 43, 0.5); text-align: center;">
                     No payment required
                 </p>
             </div>
 
             <!-- Paid Tier -->
-            <div class="pricing-card" style="border-color: #d65cee; position: relative;">
-                <div style="position: absolute; top: -15px; right: 20px; background: linear-gradient(135deg, #d65cee, #4c53ee); color: #f9f8f9; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">POPULAR</div>
-                <h3 style="color: #d65cee; font-size: 1.5rem;">Unlimited Pro</h3>
-                <div class="price">$49<span style="font-size: 2rem; color: #7b6ab6;">/mo</span></div>
+            <div class="pricing-card" style="position: relative; border-color: var(--color-gold);">
+                <div style="position: absolute; top: -12px; right: 24px; background: var(--color-gold); color: var(--color-white); padding: 0.375rem 0.875rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">Most Popular</div>
+                <h3 style="font-family: var(--font-display); color: var(--color-accent); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.5rem;">Pro</h3>
+                <div class="price">$49<span style="font-size: 1.5rem; color: rgba(43, 43, 43, 0.5);">/mo</span></div>
                 <div class="period">Billed monthly · Cancel anytime</div>
                 <ul>
                     <li>Unlimited AI coaching</li>
@@ -512,9 +556,9 @@
                     <li>Personal branding</li>
                 </ul>
                 <button id="subscribe-btn" class="subscribe-btn" onclick="handleSubscribe()">
-                    Subscribe Now
+                    Get Started
                 </button>
-                <p style="margin-top: 1rem; font-size: 0.875rem; color: #7b6ab6;">
+                <p style="margin-top: 1rem; font-size: 0.8125rem; color: rgba(43, 43, 43, 0.5); text-align: center;">
                     Secure payment via Stripe
                 </p>
             </div>
@@ -539,30 +583,30 @@
 
     <!-- About Section -->
     <section id="about">
-        <h2>Why Use LinkedIn Domination System? <span class="sparkle">💎</span></h2>
+        <h2>Why Choose LinkedIn Domination</h2>
         <div class="about-grid">
             <div class="about-card">
-                <h3>📈 Grow Your Network</h3>
+                <h3>Grow Your Network</h3>
                 <p>Strategic connection-building tactics to expand your professional network with high-value contacts in your industry.</p>
             </div>
             <div class="about-card">
-                <h3>✍️ Content That Converts</h3>
+                <h3>Content That Converts</h3>
                 <p>AI-powered content ideas and writing assistance to create engaging posts that drive engagement and opportunities.</p>
             </div>
             <div class="about-card">
-                <h3>💼 Personal Branding</h3>
+                <h3>Personal Branding</h3>
                 <p>Build a powerful personal brand that positions you as an authority in your field and attracts ideal opportunities.</p>
             </div>
             <div class="about-card">
-                <h3>🎯 Strategic Engagement</h3>
+                <h3>Strategic Engagement</h3>
                 <p>Learn exactly when and how to engage with posts for maximum visibility and relationship building.</p>
             </div>
             <div class="about-card">
-                <h3>🔥 Profile Optimization</h3>
+                <h3>Profile Optimization</h3>
                 <p>Get data-driven recommendations to optimize your profile for searchability, credibility, and conversions.</p>
             </div>
             <div class="about-card">
-                <h3>🚀 Accelerated Growth</h3>
+                <h3>Accelerated Growth</h3>
                 <p>Proven strategies and AI-powered insights to grow faster than 95% of LinkedIn users.</p>
             </div>
         </div>
@@ -570,7 +614,7 @@
 
     <!-- How it Works -->
     <section id="how-it-works">
-        <h2>How It Works <span class="sparkle">⚡</span></h2>
+        <h2>How It Works</h2>
         <div class="steps">
             <div class="step">
                 <div class="step-number">01</div>
@@ -605,7 +649,7 @@
 
     <!-- FAQ Section -->
     <section id="faq">
-        <h2>Frequently Asked Questions <span class="sparkle">❓</span></h2>
+        <h2>Frequently Asked Questions</h2>
         <div class="faq-container">
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFaq(this)">
@@ -690,7 +734,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 LinkedIn Domination System. Powered by OpenAI ChatKit. All rights reserved.</p>
+            <p>&copy; 2025 LinkedIn Domination. All rights reserved.</p>
         </div>
     </footer>
 
@@ -802,11 +846,11 @@
 
             if (usageDiv && !hasActiveSubscription()) {
                 usageDiv.innerHTML = `
-                    <div style="padding: 1rem; background: rgba(158, 149, 216, 0.2); border-radius: 12px; margin-bottom: 1rem; text-align: center;">
-                        <p style="color: #4c53ee; font-weight: 600;">
-                            📊 Free Trial: ${remaining} of ${FREE_TIER_LIMIT} messages remaining
+                    <div style="padding: 1.25rem; background: rgba(201, 169, 97, 0.08); border-radius: 12px; margin-bottom: 1.5rem; text-align: center; border: 1px solid rgba(201, 169, 97, 0.15);">
+                        <p style="color: var(--color-charcoal); font-weight: 500; font-size: 0.9375rem;">
+                            Trial: ${remaining} of ${FREE_TIER_LIMIT} messages remaining
                         </p>
-                        ${remaining <= 3 ? `<p style="color: #d65cee; font-size: 0.875rem; margin-top: 0.5rem;">Running low! Upgrade for unlimited access.</p>` : ''}
+                        ${remaining <= 3 ? `<p style="color: var(--color-gold); font-size: 0.8125rem; margin-top: 0.5rem;">Upgrade to Pro for unlimited access</p>` : ''}
                     </div>
                 `;
                 usageDiv.style.display = 'block';
@@ -817,20 +861,20 @@
             const chatWrapper = document.querySelector('.chat-wrapper');
             if (chatWrapper) {
                 const upgradeDiv = document.createElement('div');
-                upgradeDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #f9f8f9; border: 3px solid #d65cee; border-radius: 20px; padding: 2rem; max-width: 500px; z-index: 1000; box-shadow: 0 20px 60px rgba(214, 92, 238, 0.5);';
+                upgradeDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--color-white); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 18px; padding: 3rem; max-width: 480px; z-index: 1000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);';
                 upgradeDiv.innerHTML = `
-                    <h3 style="color: #d65cee; margin-bottom: 1rem;">Free Trial Limit Reached! 🚀</h3>
-                    <p style="color: #67412a; margin-bottom: 1.5rem;">
-                        You've used all 10 free messages. Upgrade to Unlimited Pro for just $49/month and get unlimited AI-powered LinkedIn coaching!
+                    <h3 style="font-family: var(--font-display); color: var(--color-accent); margin-bottom: 1rem; font-size: 2rem; font-weight: 500;">Trial Limit Reached</h3>
+                    <p style="color: rgba(43, 43, 43, 0.7); margin-bottom: 2rem; line-height: 1.6;">
+                        You've used all 10 free messages. Upgrade to Pro for just $49/month and get unlimited AI-powered LinkedIn coaching.
                     </p>
-                    <button onclick="handleSubscribe()" style="background: linear-gradient(135deg, #d65cee, #4c53ee); color: #f9f8f9; border: none; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 0.5rem;">
-                        Upgrade to Pro - $49/mo
+                    <button onclick="handleSubscribe()" style="background: var(--color-accent); color: var(--color-white); border: none; padding: 1rem 2.5rem; font-size: 1rem; font-weight: 500; border-radius: 980px; cursor: pointer; width: 100%; margin-bottom: 0.75rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: -0.01em;">
+                        Upgrade to Pro — $49/mo
                     </button>
-                    <button onclick="this.parentElement.remove()" style="background: transparent; color: #7b6ab6; border: 2px solid #9e95d8; padding: 0.75rem 2rem; font-size: 0.875rem; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%;">
-                        Maybe Later
+                    <button onclick="this.parentElement.remove()" style="background: transparent; color: rgba(43, 43, 43, 0.6); border: 1px solid rgba(0, 0, 0, 0.12); padding: 1rem 2.5rem; font-size: 0.9375rem; font-weight: 500; border-radius: 980px; cursor: pointer; width: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                        Not Now
                     </button>
-                    <p style="color: #7b6ab6; font-size: 0.875rem; margin-top: 1rem; text-align: center;">
-                        Free trial resets in ${FREE_TIER_RESET_DAYS} days
+                    <p style="color: rgba(43, 43, 43, 0.5); font-size: 0.8125rem; margin-top: 1.5rem; text-align: center;">
+                        Trial resets in ${FREE_TIER_RESET_DAYS} days
                     </p>
                 `;
                 document.body.appendChild(upgradeDiv);
@@ -960,10 +1004,10 @@
             const statusEl = document.getElementById('status-message');
             if (statusEl) {
                 statusEl.innerHTML = `
-                    <h2 style="margin-bottom: 1rem; color: ${isError ? '#ef4444' : '#4c53ee'};">
-                        ${isError ? '❌' : '🔄'} ${title}
+                    <h2 style="margin-bottom: 1rem; color: ${isError ? '#ef4444' : 'var(--color-accent)'}; font-family: var(--font-display); font-weight: 500;">
+                        ${title}
                     </h2>
-                    <p style="color: ${isError ? 'rgba(239, 68, 68, 0.8)' : '#67412a'};">${message}</p>
+                    <p style="color: ${isError ? 'rgba(239, 68, 68, 0.8)' : 'rgba(43, 43, 43, 0.6)'}; font-size: 0.9375rem;">${message}</p>
                 `;
                 statusEl.style.display = 'block';
             }
